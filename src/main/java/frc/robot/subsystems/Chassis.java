@@ -211,6 +211,11 @@ public class Chassis extends SubsystemBase {
     leftControllerGroup.set(rotationSpeed);
   }
 
+  public void lock() {
+    rightControllerGroup.stopMotor();
+    leftControllerGroup.stopMotor();
+  }
+
   /*
    * 
    */
