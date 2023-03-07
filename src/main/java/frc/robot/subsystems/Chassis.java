@@ -217,6 +217,11 @@ public class Chassis extends SubsystemBase {
     return rightMasterMotor.getMotorOutputVoltage();
   }
 
+  public void lock() {
+    rightControllerGroup.stopMotor();
+    leftControllerGroup.stopMotor();
+  }
+
   /*
    * 
    */

@@ -6,21 +6,23 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.PIDConstants;
 import frc.robot.subsystems.Chassis;
 
 public class StabalzieOnRamp extends CommandBase {
 
-private final double ANGLE_TOLORENCE = 1.5;
+  private final double ANGLE_TOLORENCE = 1.5;
+  private final double preANGLE_TOLERANCE = 5;
 
   private final Chassis chassis;
   private double startingAngle;
+  private boolean stabalizing;
   private boolean stabalized;
   private boolean justStabalized;
   private Timer timer;
 
   public StabalzieOnRamp(Chassis chassis) {
     this.chassis = chassis;
+    stabalizing = false;
     stabalized = false;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(chassis);
@@ -37,13 +39,16 @@ private final double ANGLE_TOLORENCE = 1.5;
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (!stabalized) {
+    if (!stabalizing) {
       double drivingSpeed = chassis.pidCalculate(chassis.getAngle(), startingAngle, 2);
       double speed = drivingSpeed < 0 ? drivingSpeed * 1.2 : drivingSpeed;
       chassis.setPowerToMotors(speed, speed);
     }
+    else {
+      chassis.lock();
+    }
 
-    if (chassis.getAngle() < startingAngle + ANGLE_TOLORENCE && chassis.getAngle() > startingAngle - ANGLE_TOLORENCE) {
+    if (chassis.getAngle() < startingAngle + preANGLE_TOLERANCE && chassis.getAngle() > startingAngle - preANGLE_TOLERANCE) {
       if (!justStabalized) {
         justStabalized = true;
         //Start timer
@@ -52,13 +57,17 @@ private final double ANGLE_TOLORENCE = 1.5;
       else {
         justStabalized = false;
       }
-      stabalized = true;
+      stabalizing = true;
       chassis.setMotorsBrake();
-    } else {
-      if (stabalized)
-        timer.stop();
-      
+
+      if (chassis.getAngle() < startingAngle + ANGLE_TOLORENCE && chassis.getAngle() > startingAngle - ANGLE_TOLORENCE) {
+        stabalized = true;
+      }
+    } 
+    else {
+      timer.stop();
       timer.reset();
+      stabalizing = false;
       stabalized = false;
       justStabalized = false;
     }
