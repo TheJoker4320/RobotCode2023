@@ -53,6 +53,13 @@ public class DriveByDistance extends CommandBase {
     double rightValue = chassis.pidCalculate(chassis.getRightEncoder().getDistance(), rightSetpoint, 1);
     double leftValue = chassis.pidCalculate(chassis.getLeftEncoder().getDistance(), leftSetpoint, 1);
 
+    if(chassis.getRightEncoder().getDistance() - chassis.getLeftEncoder().getDistance() >= 0.01) {
+      rightValue *= 0.05;
+    } 
+    else if(chassis.getLeftEncoder().getDistance() - chassis.getRightEncoder().getDistance() >= 0.01) {
+      leftValue *= 0.05;
+    }
+
     chassis.setPowerToMotors(rightValue, leftValue);
   }
 
