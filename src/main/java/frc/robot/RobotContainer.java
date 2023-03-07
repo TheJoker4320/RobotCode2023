@@ -70,6 +70,7 @@ public class RobotContainer {
   public RobotContainer() {
     autonomousChooser.setDefaultOption("Stabalzing on ramp", PIDConstants.kOPTION_STABALIZE_RAMP);
     autonomousChooser.addOption("Driving to collect game pieces", PIDConstants.kOPTION_DRIVE_TO_PIECES);
+    autonomousChooser.addOption("TEST", PIDConstants.kOPTION_TEST);
     SmartDashboard.putData("Autonomous chooser", autonomousChooser);
 
     chassis.setDefaultCommand(new DriveBySpeed(chassis, () -> joystick.getY(), () -> joystick.getZ()));
@@ -177,15 +178,18 @@ public class RobotContainer {
     }
     else if (autonomousChooser.getSelected() == PIDConstants.kOPTION_DRIVE_TO_PIECES) {
       claw.changeStateClaw(false);
-      return (new DriveByDistance(chassis, 0.35, 0.35)).andThen(
+      return (new DriveByDistance(chassis, 0.3, 0.3, 1.5)).andThen(
               new ReachConeAngle(arm)).andThen(
-              new DriveByDistance(chassis, -0.3, -0.3)).andThen(
+              new DriveByDistance(chassis, -0.5, -0.5, 2)).andThen(
               new WaitCommand(0.3)).andThen(
               new ChangeClawState(claw)).andThen(
               new WaitCommand(0.25)).andThen(
               new LowerArmToSwitch(arm)).andThen(
               new WaitCommand(0.25)).andThen(
               new DriveByDistance(chassis, PIDConstants.kDISTANCE_TO_GAMEPIECES - PIDConstants.kROBOT_LENGTH, PIDConstants.kDISTANCE_TO_GAMEPIECES - PIDConstants.kROBOT_LENGTH));
+    }
+    else if (autonomousChooser.getSelected() == PIDConstants.kOPTION_TEST) {
+      return (new DriveByDistance(chassis, 0.3, 0.3));
     }
     else {
       return null;
@@ -200,6 +204,12 @@ public class RobotContainer {
         CommandScheduler.getInstance().cancel(STABALZIE_ON_RAMP);
       }
     }
+  }
+  public double getLeftVolt(){
+    return chassis.getLeftVolt();
+  }
+  public double getRightVolt(){
+    return chassis.getRightVolt();
   }
 
   public Command getAutonomousPath(Boolean stabalzingOnRamp) {

@@ -54,6 +54,10 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
+    LimeLight.getLimeLightXValue();
+    LimeLight.getLimeLightYValue();
+    LimeLight.getTrueLLDistanceInCentimeters();
+    LimeLight.GetErrorDegreeFromTarget();
     CommandScheduler.getInstance().run();
   }
 
@@ -109,8 +113,10 @@ public class Robot extends TimedRobot {
     }
 
     m_robotContainer.checkIfStabalizeInterruptPressed();
-    
+    LimeLight.getTrueLLDistanceInCentimeters();
     SmartDashboard.putBoolean("CompressorState", compressorState);
+    SmartDashboard.putNumber("left volts", m_robotContainer.getLeftVolt());
+    SmartDashboard.putNumber("right volts",m_robotContainer.getRightVolt());
     SmartDashboard.putNumber("Pressure", 50 * pressure.getVoltage() - 25);
   }
 

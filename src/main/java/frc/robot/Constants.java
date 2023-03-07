@@ -44,13 +44,14 @@ public final class Constants {
   public static class PIDConstants {
     public static final String kOPTION_STABALIZE_RAMP = "Ramp Stabalizing";
     public static final String kOPTION_DRIVE_TO_PIECES = "Drive to pieces";
+    public static final String kOPTION_TEST = "Autonomous testing";
 
     public static final double kP_DRIVING = 1.15;
     public static final double kI_DRIVING = 0;
-    public static final double kD_DRIVING = 0.2;
+    public static final double kD_DRIVING = 0.1;
 
     public static final double SET_POINT = 2; // Its in meters
-    public static final double TOLERANCE_DRIVING = 0.1;
+    public static final double TOLERANCE_DRIVING = 0.03;
 
     /*
      * Ramp constants - PID whise

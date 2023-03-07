@@ -97,8 +97,8 @@ public class Chassis extends SubsystemBase {
     leftEncoder = new Encoder(ChassisConstants.LEFT_ENCODER_SCORE[0],
     ChassisConstants.LEFT_ENCODER_SCORE[1]);
 
-    rightEncoder.setReverseDirection(true);
-    leftEncoder.setReverseDirection(true);
+   // rightEncoder.setReverseDirection(true);
+   // leftEncoder.setReverseDirection(true);
     
     rightEncoder.setDistancePerPulse(PIDConstants.TICKS_TO_METERS);
     leftEncoder.setDistancePerPulse(PIDConstants.TICKS_TO_METERS);
@@ -148,10 +148,10 @@ public class Chassis extends SubsystemBase {
     leftMasterMotor.setNeutralMode(NeutralMode.Brake);
     leftSlaveMotor.setNeutralMode(NeutralMode.Brake);
 
-    rightMasterMotor.setSafetyEnabled(true);
+    /*rightMasterMotor.setSafetyEnabled(true);
     rightSlaveMotor.setSafetyEnabled(true);
     leftMasterMotor.setSafetyEnabled(true);
-    leftSlaveMotor.setSafetyEnabled(true);
+    leftSlaveMotor.setSafetyEnabled(true);*/
   }
 
   public double pidCalculate(double measurement, double setpoint, int type) {
@@ -209,6 +209,12 @@ public class Chassis extends SubsystemBase {
   public void rotate(double rotationSpeed) {
     rightControllerGroup.set(-1 * rotationSpeed);
     leftControllerGroup.set(rotationSpeed);
+  }
+  public double getLeftVolt(){
+    return leftMasterMotor.getMotorOutputVoltage();
+  }
+  public double getRightVolt(){
+    return rightMasterMotor.getMotorOutputVoltage();
   }
 
   /*

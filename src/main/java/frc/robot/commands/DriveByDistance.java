@@ -15,10 +15,10 @@ public class DriveByDistance extends CommandBase {
   private final double rightSetpoint;
   private final double leftSetpoint;
 
-  //private final double timeout;
-  //private final Timer timer;
+  private final double timeout;
+  private final Timer timer;
 
- /* public DriveByDistance(final Chassis chassis, double rightSetpoint, double leftSetpoint, double timeout) {
+ public DriveByDistance(final Chassis chassis, double rightSetpoint, double leftSetpoint, double timeout) {
     this.chassis = chassis;
     this.rightSetpoint = rightSetpoint;
     this.leftSetpoint = leftSetpoint;
@@ -27,14 +27,14 @@ public class DriveByDistance extends CommandBase {
     timer = new Timer();
 
     addRequirements(chassis);
-  }*/
+  }
   public DriveByDistance(final Chassis chassis, double rightSetpoint, double leftSetpoint) {
     this.chassis = chassis;
     this.rightSetpoint = rightSetpoint;
     this.leftSetpoint = leftSetpoint;
 
-    //this.timeout = Double.POSITIVE_INFINITY;
-    //timer = new Timer();
+    this.timeout = Double.POSITIVE_INFINITY;
+    timer = new Timer();
 
     addRequirements(chassis);
   }
@@ -43,7 +43,7 @@ public class DriveByDistance extends CommandBase {
   @Override
   public void initialize() {
     chassis.resetEncoders();
-    //timer.start();
+    timer.start();
     //SmartDashboard.putBoolean("We finished", false);
   }
 
@@ -73,8 +73,8 @@ public class DriveByDistance extends CommandBase {
     boolean isAtLeft = (chassis.getLeftEncoder().getDistance() > leftSetpoint - PIDConstants.TOLERANCE_DRIVING) && 
                         (chassis.getLeftEncoder().getDistance() < leftSetpoint + PIDConstants.TOLERANCE_DRIVING);
     
-    return (isAtRight && isAtLeft) ;
-    //|| (timer.get() > timeout);
+    return (isAtRight && isAtLeft)
+    || (timer.get() > timeout);
     
   }
 }

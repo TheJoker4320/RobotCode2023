@@ -10,15 +10,12 @@ import frc.robot.Constants.LimeLightConstants;
 public class AimToTarget extends CommandBase {
 
     private final Chassis chassis;
-    private final LimeLight limeLight;
-
     double rotationSpeed;
     double angleError;
     double startingAngle;
 
-    public AimToTarget(Chassis chassis, LimeLight limeLight) {
+    public AimToTarget(Chassis chassis) {
         this.chassis = chassis;
-        this.limeLight = limeLight;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(chassis);
     }
@@ -26,7 +23,7 @@ public class AimToTarget extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        angleError = limeLight.FindAngleError();
+        angleError = LimeLight.GetErrorDegreeFromTarget();
         startingAngle = chassis.getYawAngle();
 
     }
@@ -35,7 +32,6 @@ public class AimToTarget extends CommandBase {
     @Override
     public void execute() {
         // aiming to the object//
-        // FIXME: test this pid and understand why its driving forward/backward or
         // rotating for a moment
         double rotationSpeed;
         rotationSpeed = chassis.pidCalculate(chassis.getYawAngle(), startingAngle + angleError, 3);
