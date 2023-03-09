@@ -10,14 +10,15 @@ public class LimeLight {
 
     // constants//
     // TODO: Correct the constats to the new robot.
-    public static final double LIMELIGHT_MOUNT_ANGLE_DEGREES = 1.5; // how many degrees back is your limelight rotated from
+    public static final double LL_DEGREE = 2.15; //1.5 how many degrees back is your limelight rotated from
                                                              // perfectly vertical?
-    public static final double LIMELIGHT_LENSE_HEIGHT_CM = 23.5; // distance from the center of the Limelight lens to the floor
-    public static final double GOAL_HEIGHT_CM = 114.5; // distance from the target to the floor
-    public static final double TRUE_LL_DISTANCE_FROM_RCENTER = 28.53507; //limelight distance from robot center directly
-    public static final double HORIZONTAL_LL_DISTANCE_FROM_RCENTER = 19.1; //limelight distance from robot center horizontally
-    public static final double VERTICAL_LL_DISTANCE_FROM_RCENTER = 21.2; //limelight distance from robot center vertically
-    public static final double ANGLE_B_RADIAN = 0.837409; //angle opposite of the limelight near the base. i had not better name deal with it
+    public static final double LL_LENSE_HEIGHT_CM = 98; // distance from the center of the Limelight lens to the floor
+    public static final double GOAL_HEIGHT_CM = 117.5; // distance from the target to the floor
+    //public static final double GOAL_HEIGHT_CM = 114.5; // distance from the target to the floor
+    public static final double LL_DISTANCE_FROM_CENTER = 23.4917; //limelight distance from robot center directly ((13.1^2 + 19.5^2)^0.5)
+    public static final double HORIZONTAL_LL_DISTANCE_FROM_RCENTER = 13.1; //limelight distance from robot center horizontally
+    public static final double VERTICAL_LL_DISTANCE_FROM_RCENTER = 19.5; //limelight distance from robot center vertically
+    public static final double LL_AGGLE_FROM_CENTER_RADS = Math.tan(13.1/19.5) ; // angle opposite of the limelight near the base. i had not better name deal with it
     // constants//
 
     
@@ -57,31 +58,45 @@ public class LimeLight {
 
     public static double getTrueLLDistanceInCentimeters() {
         NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-        NetworkTableEntry ty = table.getEntry("ty");
-        double targetOffsetAngle_Vertical = ty.getDouble(0.0);
-        NetworkTableEntry tx = table.getEntry("tx");
-        double targetOffsetAngle_Horizontal = tx.getDouble(0.0);
 
-        double angleToGoalDegrees = LIMELIGHT_MOUNT_ANGLE_DEGREES + targetOffsetAngle_Vertical;
+        NetworkTableEntry ty_entry = table.getEntry("ty");
+        double ty = ty_entry.getDouble(0.0);
+
+        NetworkTableEntry tx_entry = table.getEntry("tx");
+        double tx = tx_entry.getDouble(0.0);
+        double txRads = Math.toRadians(tx);
+
+        double angleToGoalDegrees = LL_DEGREE + ty;
+        double angleToGoalRadians =  Math.toRadians(angleToGoalDegrees);
         // calculate distance
-        double distanceFromLimelightToGoalCentimeters = (GOAL_HEIGHT_CM - LIMELIGHT_LENSE_HEIGHT_CM) / 
-                ((180 / Math.PI) * Math.tan((Math.PI / 180) * angleToGoalDegrees) * 
-                Math.cos((Math.PI / 180) * targetOffsetAngle_Horizontal));
-        SmartDashboard.putNumber("Distance to goal from LL", distanceFromLimelightToGoalCentimeters);
-        return distanceFromLimelightToGoalCentimeters;
+        double distanceFromGoal = (GOAL_HEIGHT_CM - LL_LENSE_HEIGHT_CM) / 
+                (Math.tan(angleToGoalRadians) * Math.cos(txRads));
+        SmartDashboard.putNumber("Distance to goal from LL", distanceFromGoal);
+        return distanceFromGoal;
     }
 
     public static double GetErrorDegreeFromTarget() {
         NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-        NetworkTableEntry txEntry = table.getEntry("tx");
-        double tx = txEntry.getDouble(0.0);
+
+        NetworkTableEntry tx_entry = table.getEntry("tx");
+        double tx = tx_entry.getDouble(0.0);
+        double txRads = Math.toRadians(tx);
 
         double distanceFromLimelightToGoalCentimeters = getTrueLLDistanceInCentimeters();
-        
-        double degreeError = 90 - (180 - tx - (180 / Math.PI) * ANGLE_B_RADIAN - (180 / Math.PI) * Math.atan((
-            (180 / Math.PI) * Math.sin((Math.PI / 180) * tx) * TRUE_LL_DISTANCE_FROM_RCENTER) /
-            (distanceFromLimelightToGoalCentimeters - (180 / Math.PI) * Math.cos((Math.PI / 180) * tx) * TRUE_LL_DISTANCE_FROM_RCENTER)));
-        SmartDashboard.putNumber("Degree To Go", degreeError);
+
+/*        double degreeError = 90 - tx - (180 / Math.PI) * LL_AGGLE_FROM_CENTER_RADS - (180 / Math.PI) * Math.atan((
+            (180 / Math.PI) * Math.sin((Math.PI / 180) * tx) * LL_DISTANCE_FROM_CENTER) /
+            (distanceFromLimelightToGoalCentimeters - (180 / Math.PI) * Math.cos((Math.PI / 180) * tx) * LL_DISTANCE_FROM_CENTER)));*/
+
+        /*double degreeError = 90 - tx - Math.toDegrees(Math.atan(
+        (distanceFromLimelightToGoalCentimeters -Math.sin(txRads) * LL_DISTANCE_FROM_CENTER) /
+        (Math.cos(txRads) * LL_DISTANCE_FROM_CENTER)));*/
+
+        double degreeError = - 90 + tx + Math.toDegrees(Math.atan(
+        (distanceFromLimelightToGoalCentimeters -Math.sin(txRads) * LL_DISTANCE_FROM_CENTER) /
+        (Math.cos(txRads) * LL_DISTANCE_FROM_CENTER)));
+
+        SmartDashboard.putNumber("Degree To Goal", degreeError);
         return degreeError;
     }
     //newly added command to be checked

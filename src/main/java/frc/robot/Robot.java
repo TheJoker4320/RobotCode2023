@@ -114,6 +114,7 @@ public class Robot extends TimedRobot {
 
     m_robotContainer.checkIfStabalizeInterruptPressed();
     LimeLight.getTrueLLDistanceInCentimeters();
+    LimeLight.GetErrorDegreeFromTarget();
     SmartDashboard.putBoolean("CompressorState", compressorState);
     SmartDashboard.putNumber("left volts", m_robotContainer.getLeftVolt());
     SmartDashboard.putNumber("right volts",m_robotContainer.getRightVolt());

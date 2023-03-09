@@ -207,8 +207,8 @@ public class Chassis extends SubsystemBase {
   }
 
   public void rotate(double rotationSpeed) {
-    rightControllerGroup.set(-1 * rotationSpeed);
-    leftControllerGroup.set(rotationSpeed);
+    rightControllerGroup.set(1 * rotationSpeed);
+    leftControllerGroup.set(-1 * rotationSpeed);
   }
   public double getLeftVolt(){
     return leftMasterMotor.getMotorOutputVoltage();

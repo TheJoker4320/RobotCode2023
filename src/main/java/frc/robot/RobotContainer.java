@@ -58,7 +58,7 @@ public class RobotContainer {
 
   private Joystick joystick = new Joystick(OperatorConstants.kDRIVING_PORT);
   private XboxController xboxController = new XboxController(OperatorConstants.kBUTTONS_PORT);
-  
+
   public StabalzieOnRamp STABALZIE_ON_RAMP = new StabalzieOnRamp(Chassis.getInstantce());
   private final SendableChooser<String> autonomousChooser = new SendableChooser<>();
 
@@ -189,7 +189,7 @@ public class RobotContainer {
               new DriveByDistance(chassis, PIDConstants.kDISTANCE_TO_GAMEPIECES - PIDConstants.kROBOT_LENGTH, PIDConstants.kDISTANCE_TO_GAMEPIECES - PIDConstants.kROBOT_LENGTH));
     }
     else if (autonomousChooser.getSelected() == PIDConstants.kOPTION_TEST) {
-      return (new DriveByDistance(chassis, 0.3, 0.3));
+      return (new AimToTarget(chassis));
     }
     else {
       return null;

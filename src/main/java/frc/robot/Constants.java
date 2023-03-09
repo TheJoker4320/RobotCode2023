@@ -81,11 +81,11 @@ public final class Constants {
   }
 
   public static class LimeLightConstants {
-    public static final double kP = 0.06;
+    public static final double kP = 0.008;
     public static final double kI = 0;
     public static final double kD = 0;
 
-    public static final double kTOLERANCE = 1;
+    public static final double kTOLERANCE = 5;
   }
 
   public static class RamseteCommandConstatns {
