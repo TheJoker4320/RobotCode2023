@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.Shifters;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -77,6 +78,9 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+
+    m_robotContainer.initOnSpeed();
+
   }
 
   /** This function is called periodically during autonomous. */
@@ -92,6 +96,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    m_robotContainer.initOnSpeed();
 
 
     compressorState = compressor.isEnabled();
@@ -110,6 +115,9 @@ public class Robot extends TimedRobot {
         compressor.disable();
     } else if(compressor.getPressureSwitchValue() && !compressorState) {
       compressor.disable();
+    }
+    else if (!compressor.getPressureSwitchValue()){
+      compressor.enableDigital();
     }
 
     m_robotContainer.checkIfStabalizeInterruptPressed();

@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.AutonomousCommands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -53,14 +53,14 @@ public class DriveByDistance extends CommandBase {
     double rightValue = chassis.pidCalculate(chassis.getRightEncoder().getDistance(), rightSetpoint, 1);
     double leftValue = chassis.pidCalculate(chassis.getLeftEncoder().getDistance(), leftSetpoint, 1);
 
-    if(chassis.getRightEncoder().getDistance() - chassis.getLeftEncoder().getDistance() >= 0.01) {
-      rightValue *= 0.05;
+    /*if(chassis.getRightEncoder().getDistance() - chassis.getLeftEncoder().getDistance() >= 0.01) {
+      rightValue *= 0;
     } 
     else if(chassis.getLeftEncoder().getDistance() - chassis.getRightEncoder().getDistance() >= 0.01) {
-      leftValue *= 0.05;
-    }
+      leftValue *= 0;
+    }*/
 
-    chassis.setPowerToMotors(rightValue, leftValue);
+    chassis.setPowerToMotors(rightValue , leftValue);
   }
 
   // Called once the command ends or is interrupted.

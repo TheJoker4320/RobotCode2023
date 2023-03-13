@@ -17,7 +17,7 @@ public class Collector extends SubsystemBase {
   private Collector() {
     Front_Motor = new WPI_TalonSRX(CollectorConstants.FRONT_MOTOR_PORT);
     Front_Motor.configFactoryDefault();
-    Front_Motor.setInverted(true);
+    Front_Motor.setInverted(false);
   }
 
   public static Collector getInstance() {

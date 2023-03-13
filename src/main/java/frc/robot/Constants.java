@@ -39,11 +39,13 @@ public final class Constants {
     public static final int COLLECT_FACING_BUTTON = 7;
     public static final int COLLECT_AGAINST_BUTTON = 8;
     public static final int RAMP_BUTTON = 9;
+    public static final int INTERRUPED_RAMP = 10;
   }
 
   public static class PIDConstants {
     public static final String kOPTION_STABALIZE_RAMP = "Ramp Stabalizing";
-    public static final String kOPTION_DRIVE_TO_PIECES = "Drive to pieces";
+    public static final String kOPTION_DRIVE_TO_PIECES_RIGHT = "Drive to pieces RIGHT";
+    public static final String kOPTION_DRIVE_TO_PIECES_LEFT = "Drive to pieces LEFT";
     public static final String kOPTION_TEST = "Autonomous testing";
 
     public static final double kP_DRIVING = 1.15;
@@ -51,7 +53,7 @@ public final class Constants {
     public static final double kD_DRIVING = 0.1;
 
     public static final double SET_POINT = 2; // Its in meters
-    public static final double TOLERANCE_DRIVING = 0.03;
+    public static final double TOLERANCE_DRIVING = 0.01;
 
     /*
      * Ramp constants - PID whise
@@ -78,6 +80,10 @@ public final class Constants {
     public static final double kDISTANCE_TO_GAMEPIECES = 5.65 - 0.4; //5.4356m
 
     public static final double kROBOT_LENGTH = 0.93;
+
+    public static final double kDBA_TOLERANCE = 1.5;
+    public static final double kSPEED_ON_RAMP = 0.5;
+    public static final double kMAX_RAMP_ANGLE = 10;
   }
 
   public static class LimeLightConstants {

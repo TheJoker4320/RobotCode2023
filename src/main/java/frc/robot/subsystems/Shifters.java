@@ -21,7 +21,6 @@ public class Shifters extends SubsystemBase {
 
   private Shifters() {
     shifterSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, PneumaticsConstants.FIRST_SHIFTER_SOLENOID_PORT, PneumaticsConstants.SECOND_SHIFTER_SOLENOID_PORT);
-    shifterSolenoid.set(Value.kReverse);
   }
 
   public boolean getStateShifter()

@@ -6,21 +6,23 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.PIDConstants;
-import frc.robot.commands.AimToTarget;
 import frc.robot.commands.ChangeClawState;
 import frc.robot.commands.ChangeShift;
 import frc.robot.commands.Collect;
-
-import frc.robot.commands.DriveByDistance;
 import frc.robot.commands.DriveBySpeed;
 import frc.robot.commands.Eject;
 import frc.robot.commands.ElevateBySpeed;
 import frc.robot.commands.LowerArmToSwitch;
 import frc.robot.commands.LowerBySpeed;
-import frc.robot.commands.ReachConeAngle;
 import frc.robot.commands.RestrictDrivingAgainstRobot;
 import frc.robot.commands.RestrictDrivingTowardsRobot;
-import frc.robot.commands.StabalzieOnRamp;
+import frc.robot.commands.AutonomousCommands.AimToTarget;
+import frc.robot.commands.AutonomousCommands.CollectByTime;
+import frc.robot.commands.AutonomousCommands.DriveByDistance;
+import frc.robot.commands.AutonomousCommands.ReachConeAngle;
+import frc.robot.commands.AutonomousCommands.ShiftPowerState;
+import frc.robot.commands.AutonomousCommands.ShiftSpeedState;
+import frc.robot.commands.AutonomousCommands.StabalzieOnRamp;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Chassis;
 import frc.robot.subsystems.Claw;
@@ -69,7 +71,8 @@ public class RobotContainer {
    */
   public RobotContainer() {
     autonomousChooser.setDefaultOption("Stabalzing on ramp", PIDConstants.kOPTION_STABALIZE_RAMP);
-    autonomousChooser.addOption("Driving to collect game pieces", PIDConstants.kOPTION_DRIVE_TO_PIECES);
+    autonomousChooser.addOption("RIGHT Driving to collect game pieces", PIDConstants.kOPTION_DRIVE_TO_PIECES_RIGHT);
+    autonomousChooser.addOption("LEFT Driving to collect game pieces", PIDConstants.kOPTION_DRIVE_TO_PIECES_LEFT);
     autonomousChooser.addOption("TEST", PIDConstants.kOPTION_TEST);
     SmartDashboard.putData("Autonomous chooser", autonomousChooser);
 
@@ -100,7 +103,8 @@ public class RobotContainer {
      * and from closed it will become open.
      */
     JoystickButton ChangeShifterState = new JoystickButton(joystick, OperatorConstants.SHIFTER_BUTTON);
-    ChangeShifterState.onTrue(new ChangeShift(shifters));
+    ChangeShifterState.onTrue(new ShiftSpeedState(shifters));
+    ChangeShifterState.onFalse(new ShiftPowerState(shifters));
 
 
     /*
@@ -114,7 +118,7 @@ public class RobotContainer {
     JoystickButton ElevateButton = new JoystickButton(xboxController, XboxController.Button.kRightBumper.value);
     ElevateButton.whileTrue(new ElevateBySpeed(arm));
 
-    JoystickButton ReachConeHeight = new JoystickButton(xboxController, XboxController.Button.kBack.value);
+    JoystickButton ReachConeHeight = new JoystickButton(xboxController, XboxController.Button.kLeftStick.value);
     ReachConeHeight.onTrue(new ReachConeAngle(arm));
     /*
      * Since the cones behave differently with the collector depending on the
@@ -123,9 +127,9 @@ public class RobotContainer {
      * cone's direction so the cone can enter 1successfully
      */
 
-    JoystickButton ejectButton = new JoystickButton(xboxController, XboxController.Button.kB.value);
+    JoystickButton ejectButton = new JoystickButton(xboxController, XboxController.Button.kY.value);
     ejectButton.whileTrue(new Eject(collector));
-    JoystickButton collectButton = new JoystickButton(xboxController, XboxController.Button.kY.value);
+    JoystickButton collectButton = new JoystickButton(xboxController, XboxController.Button.kA.value);
     collectButton.whileTrue(new Collect(collector));
 
     JoystickButton restrictDrivingTowards = new JoystickButton(joystick, OperatorConstants.COLLECT_FACING_BUTTON);
@@ -138,11 +142,11 @@ public class RobotContainer {
      * become closed
      * and from closed it will become open.
      */
-    JoystickButton changeClawState = new JoystickButton(xboxController, XboxController.Button.kX.value);
+    JoystickButton changeClawState = new JoystickButton(xboxController, XboxController.Button.kB.value);
     changeClawState.onTrue(new ChangeClawState(claw));
 
 
-    JoystickButton stabalizeOnRampButton = new JoystickButton(xboxController, XboxController.Button.kA.value);
+    JoystickButton stabalizeOnRampButton = new JoystickButton(xboxController,  OperatorConstants.RAMP_BUTTON);
     stabalizeOnRampButton.onTrue(STABALZIE_ON_RAMP);
 
     //FrontCamera
@@ -176,20 +180,35 @@ public class RobotContainer {
               new DriveByDistance(chassis, .55, .55)).andThen(
               new StabalzieOnRamp(chassis));
     }
-    else if (autonomousChooser.getSelected() == PIDConstants.kOPTION_DRIVE_TO_PIECES) {
+    else if (autonomousChooser.getSelected() == PIDConstants.kOPTION_DRIVE_TO_PIECES_RIGHT) {
       claw.changeStateClaw(false);
       return (new DriveByDistance(chassis, 0.3, 0.3, 1.5)).andThen(
               new ReachConeAngle(arm)).andThen(
-              new DriveByDistance(chassis, -0.5, -0.5, 2)).andThen(
+              new DriveByDistance(chassis, -0.4, -0.4, 1.5)).andThen(
               new WaitCommand(0.3)).andThen(
               new ChangeClawState(claw)).andThen(
               new WaitCommand(0.25)).andThen(
               new LowerArmToSwitch(arm)).andThen(
               new WaitCommand(0.25)).andThen(
-              new DriveByDistance(chassis, PIDConstants.kDISTANCE_TO_GAMEPIECES - PIDConstants.kROBOT_LENGTH, PIDConstants.kDISTANCE_TO_GAMEPIECES - PIDConstants.kROBOT_LENGTH));
+              (new DriveByDistance(chassis, 4.7, 4.3 ).alongWith(
+              new CollectByTime(3.5, collector))));
+    }
+    else if (autonomousChooser.getSelected() == PIDConstants.kOPTION_DRIVE_TO_PIECES_LEFT) {
+      claw.changeStateClaw(false);
+      return (new DriveByDistance(chassis, 0.3, 0.3, 1.5)).andThen(
+              new ReachConeAngle(arm)).andThen(
+              new DriveByDistance(chassis, -0.4, -0.4, 1.5)).andThen(
+              new WaitCommand(0.3)).andThen(
+              new ChangeClawState(claw)).andThen(
+              new WaitCommand(0.25)).andThen(
+              new LowerArmToSwitch(arm)).andThen(
+              new WaitCommand(0.25)).andThen(
+              (new DriveByDistance(chassis, 4.5, 4.7 ).alongWith(
+              new CollectByTime(3.5, collector))));
     }
     else if (autonomousChooser.getSelected() == PIDConstants.kOPTION_TEST) {
-      return (new AimToTarget(chassis));
+      return (new DriveByDistance(chassis, 4.8, 4.35 ).alongWith(
+        new CollectByTime(3.5, collector)));
     }
     else {
       return null;
@@ -197,7 +216,7 @@ public class RobotContainer {
   }
 
   public void checkIfStabalizeInterruptPressed() {
-    if (joystick.getRawButton(10))
+    if (joystick.getRawButton(OperatorConstants.INTERRUPED_RAMP))
     {
       if (CommandScheduler.getInstance().isScheduled(STABALZIE_ON_RAMP))
       {
@@ -228,4 +247,10 @@ public class RobotContainer {
     }
   }
   //TODO: ADD ENUM TO THE AUTONOMOUS PATH
+  public void initOnSpeed(){
+    shifters.changeStateShifter(false);
+  }
+  public void initOnForce() {
+    shifters.changeStateShifter(true);
+  }
 }
